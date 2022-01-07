@@ -40,20 +40,29 @@ describe("ZKSTreasury", function () {
         expect(await erc20Token.balanceOf(deployer.address)).to.equal(1000)
     })
 
-    it("trasfer erc20 to treasury", async () => {
+    it("transfer erc20 to treasury", async () => {
         let erc20Balance = await erc20Token.balanceOf(user.address)
         await erc20Token.connect(user).transfer(zksTreasury.address, 100)
         expect(await erc20Token.balanceOf(user.address)).to.equal(erc20Balance - 100)
         expect(await erc20Token.balanceOf(zksTreasury.address)).to.equal(100)
 
         expect(await mockZkCore.isDepositERC20Invoked()).to.equal(false)
-        await expect(zksTreasury.connect(user).depositErc20ToZKCore([erc20Token.address], [1])).
-        to.be.revertedWith('Ownable: caller is not the owner')
+        await expect(zksTreasury.connect(user).depositErc20ToZKCore([erc20Token.address], [1])).to.be.revertedWith('Ownable: caller is not the owner')
 
-        await expect(zksTreasury.connect(deployer).depositErc20ToZKCore([erc20Token.address], [1, 2])).
-        to.be.revertedWith('unmatched length')
+        await expect(zksTreasury.connect(deployer).depositErc20ToZKCore([erc20Token.address], [1, 2])).to.be.revertedWith('unmatched length')
 
         await zksTreasury.depositErc20ToZKCore([erc20Token.address], [1])
         expect(await mockZkCore.isDepositERC20Invoked()).to.equal(true)
+    })
+
+    it("transfer eth to treasury", async () => {
+        let ethBalance = await ethers.provider.getBalance(zksTreasury.address)
+        const oneEther = ethers.utils.parseEther('1')
+        await user.sendTransaction({
+            to: zksTreasury.address,
+            value: oneEther
+        })
+
+        expect(await ethers.provider.getBalance(zksTreasury.address)).to.equal(ethBalance + oneEther)
     })
 });
