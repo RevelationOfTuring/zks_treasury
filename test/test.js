@@ -73,14 +73,14 @@ describe("ZKSTreasury", function () {
         expect(await mockZkCore.isDepositERC20Invoked()).to.equal(true)
     })
 
-    // it("transfer eth to treasury", async () => {
-    //     let ethBalance = await ethers.provider.getBalance(zksTreasury.address)
-    //     const oneEther = ethers.utils.parseEther('1')
-    //     await user.sendTransaction({
-    //         to: zksTreasury.address,
-    //         value: oneEther
-    //     })
-    //
-    //     expect(await ethers.provider.getBalance(zksTreasury.address)).to.equal(ethBalance + oneEther)
-    // })
+    it("transfer eth to treasury", async () => {
+        let ethBalance = await ethers.provider.getBalance(zksTreasury.address)
+        const oneEther = ethers.utils.parseEther('1')
+        await user.sendTransaction({
+            to: zksTreasury.address,
+            value: oneEther
+        })
+
+        expect(await ethers.provider.getBalance(zksTreasury.address)).to.equal(ethBalance + oneEther)
+    })
 });

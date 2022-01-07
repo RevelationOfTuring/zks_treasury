@@ -41,14 +41,17 @@ contract ZKSTreasury is Ownable, ReentrancyGuard {
         }
     }
 
+    // receiverLayer2 setter
     function setReceiverLayer2(address newReceiverLayer2) external onlyOwner {
         receiverLayer2 = newReceiverLayer2;
     }
 
+    // zkCoreAddress setter
     function setZkCoreAddress(address newZkCoreAddress) external onlyOwner {
         zkCoreAddress = ZKCore(newZkCoreAddress);
     }
 
+    // give erc20 approval to ZK core contract
     function approveToZKCore(
         address[] calldata tokenAddresses,
         uint[] calldata allowances
