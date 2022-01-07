@@ -9,7 +9,7 @@ import "./interface/ZKCore.sol";
 contract ZKSTreasury is Ownable, ReentrancyGuard {
     event DepositETH(address depositer, uint amount);
 
-    ZKCore public immutable zkCoreAddress;
+    ZKCore public zkCoreAddress;
     address public receiverLayer2;
 
     constructor(address receiverL2, address zkCoreAddr){
@@ -32,5 +32,13 @@ contract ZKSTreasury is Ownable, ReentrancyGuard {
         for (uint i = 0; i < tokenAddresses.length; ++i) {
             zkCoreAddress.depositERC20(IERC20(tokenAddresses[i]), amounts[i], receiverLayer2);
         }
+    }
+
+    function setReceiverLayer2(address newReceiverLayer2) external onlyOwner {
+        receiverLayer2 = newReceiverLayer2;
+    }
+
+    function setZkCoreAddress(address newZkCoreAddress) external onlyOwner {
+        zkCoreAddress = ZKCore(newZkCoreAddress);
     }
 }
