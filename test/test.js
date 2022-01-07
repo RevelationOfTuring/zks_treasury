@@ -1,20 +1,38 @@
 const {expect} = require("chai");
 const {ethers} = require("hardhat");
 
-describe("MockErc20Token", function () {
+describe("ZKSTreasury", function () {
+    let mockZkCore, erc20Token, zksTreasury
+    let deployer, receiverL2
+    let maxEthDeposit = "100"
+
+    before(async () => {
+        [deployer, receiverL2] = await ethers.getSigners()
+        console.log('deployer address: ' + deployer.address)
+        console.log('receiver on layer 2 address: ' + receiverL2.address)
+        const MockZkCore = await ethers.getContractFactory("MockZKCore")
+        const Erc20Token = await ethers.getContractFactory("MockErc20Token")
+        const ZKSTreasury = (await ethers.getContractFactory("ZKSTreasury")).connect(deployer)
+
+        mockZkCore = await MockZkCore.deploy()
+        erc20Token = await Erc20Token.deploy()
+        await mockZkCore.deployed()
+        await erc20Token.deployed()
+        console.log('mock ZkCore contract: ' + mockZkCore.address)
+        console.log('mock Erc20 contract: ' + erc20Token.address)
+
+        zksTreasury = await ZKSTreasury.deploy(maxEthDeposit, receiverL2.address, mockZkCore.address)
+        await zksTreasury.deployed()
+        console.log('zks treasury contract: ' + zksTreasury.address)
+
+        expect(await zksTreasury.owner()).to.equal(deployer.address)
+        expect(await zksTreasury.zkCoreAddress()).to.equal(mockZkCore.address)
+        expect(await zksTreasury.receiverLayer2()).to.equal(receiverL2.address)
+    })
+
     it("common test", async function () {
-        const [deployer] = await ethers.getSigners();
-        console.log("deployer:" + deployer.address);
 
-        const Erc20Token = await ethers.getContractFactory("MockErc20Token");
-        const erc20Token = await Erc20Token.deploy();
-        await erc20Token.deployed();
-        console.log("erc20 address:" + erc20Token.address);
-
-        const amount = '1024';
-        await erc20Token.connect(deployer).mintDirectly(deployer.address, amount);
-        expect(await erc20Token.balanceOf(deployer.address)).to.equal(amount);
-    });
+    })
 });
 
 // describe("Greeter", function () {
