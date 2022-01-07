@@ -4,8 +4,6 @@ const {ethers} = require("hardhat");
 describe("ZKSTreasury", function () {
     let mockZkCore, erc20Token, zksTreasury
     let deployer, receiverL2, user
-    let maxEthDeposit = "100"
-    let nativeETHAddress = '0x0000000000000000000000000000000000000000'
 
     before(async () => {
         [deployer, receiverL2, user] = await ethers.getSigners()
@@ -24,14 +22,13 @@ describe("ZKSTreasury", function () {
         console.log(`mock ZkCore contract: ${mockZkCore.address}`)
         console.log(`mock Erc20 contract: ${erc20Token.address}`)
 
-        zksTreasury = await ZKSTreasury.deploy(maxEthDeposit, receiverL2.address, mockZkCore.address)
+        zksTreasury = await ZKSTreasury.deploy(receiverL2.address, mockZkCore.address)
         await zksTreasury.deployed()
         console.log(`zks treasury contract: ${zksTreasury.address}`)
 
         expect(await zksTreasury.owner()).to.equal(deployer.address)
         expect(await zksTreasury.zkCoreAddress()).to.equal(mockZkCore.address)
         expect(await zksTreasury.receiverLayer2()).to.equal(receiverL2.address)
-        expect(await zksTreasury.maxDepositAmount(nativeETHAddress)).to.equal(maxEthDeposit)
         console.log('deployer eth balance: ' + await ethers.provider.getBalance(deployer.address))
     })
 
@@ -42,21 +39,21 @@ describe("ZKSTreasury", function () {
         expect(await erc20Token.balanceOf(user.address)).to.equal(1000)
         expect(await erc20Token.balanceOf(deployer.address)).to.equal(1000)
     })
-});
 
-// describe("Greeter", function () {
-//   it("Should return the new greeting once it's changed", async function () {
-//     const Greeter = await ethers.getContractFactory("Greeter");
-//     const greeter = await Greeter.deploy("Hello, world!");
-//     await greeter.deployed();
-//
-//     expect(await greeter.greet()).to.equal("Hello, world!");
-//
-//     const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
-//
-//     // wait until the transaction is mined
-//     await setGreetingTx.wait();
-//
-//     expect(await greeter.greet()).to.equal("Hola, mundo!");
-//   });
-// });
+    it("trasfer erc20 to treasury", async () => {
+        let erc20Balance = await erc20Token.balanceOf(user.address)
+        await erc20Token.connect(user).transfer(zksTreasury.address, 100)
+        expect(await erc20Token.balanceOf(user.address)).to.equal(erc20Balance - 100)
+        expect(await erc20Token.balanceOf(zksTreasury.address)).to.equal(100)
+
+        expect(await mockZkCore.isDepositERC20Invoked()).to.equal(false)
+        await expect(zksTreasury.connect(user).depositErc20ToZKCore([erc20Token.address], [1])).
+        to.be.revertedWith('Ownable: caller is not the owner')
+
+        await expect(zksTreasury.connect(deployer).depositErc20ToZKCore([erc20Token.address], [1, 2])).
+        to.be.revertedWith('unmatched length')
+
+        await zksTreasury.depositErc20ToZKCore([erc20Token.address], [1])
+        expect(await mockZkCore.isDepositERC20Invoked()).to.equal(true)
+    })
+});

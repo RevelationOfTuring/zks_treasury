@@ -6,7 +6,14 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../interface/ZKCore.sol";
 
 contract MockZKCore is ZKCore {
-    function depositERC20(IERC20 _token, uint104 _amount, address _franklinAddr) external override {}
+    bool public isDepositERC20Invoked;
+    bool public isDepositETHInvoked;
 
-    function depositETH(address _franklinAddr) external override payable {}
+    function depositERC20(IERC20 _token, uint104 _amount, address _franklinAddr) external override {
+        isDepositERC20Invoked = true;
+    }
+
+    function depositETH(address _franklinAddr) external override payable {
+        isDepositETHInvoked = true;
+    }
 }

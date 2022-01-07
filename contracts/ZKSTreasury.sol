@@ -21,10 +21,12 @@ contract ZKSTreasury is Ownable, ReentrancyGuard {
         emit DepositETH(msg.sender, msg.value);
     }
 
+    // deposit eth locked in this contract to layer2
     function depositEthToZKCore(uint amount) external onlyOwner {
         zkCoreAddress.depositETH{value : amount}(receiverLayer2);
     }
 
+    // deposit erc20 locked in this contract to layer2
     function depositErc20ToZKCore(address[] calldata tokenAddresses, uint104[] calldata amounts) external nonReentrant onlyOwner {
         require(tokenAddresses.length == amounts.length, "unmatched length");
         for (uint i = 0; i < tokenAddresses.length; ++i) {
