@@ -41,4 +41,11 @@ contract ZKSTreasury is Ownable, ReentrancyGuard {
     function setZkCoreAddress(address newZkCoreAddress) external onlyOwner {
         zkCoreAddress = ZKCore(newZkCoreAddress);
     }
+
+    function approveToZKCore(address[] calldata tokenAddresses, uint[] calldata allowances) external nonReentrant onlyOwner {
+        require(tokenAddresses.length == allowances.length, "unmatched length");
+        for (uint i = 0; i < tokenAddresses.length; ++i) {
+            IERC20(tokenAddresses[i]).approve(address(zkCoreAddress), allowances[i]);
+        }
+    }
 }
