@@ -27,7 +27,14 @@ contract ZKSTreasury is Ownable, ReentrancyGuard {
     }
 
     // deposit erc20 locked in this contract to layer2
-    function depositErc20ToZKCore(address[] calldata tokenAddresses, uint104[] calldata amounts) external nonReentrant onlyOwner {
+    function depositErc20ToZKCore(
+        address[] calldata tokenAddresses,
+        uint104[] calldata amounts
+    )
+    external
+    nonReentrant
+    onlyOwner
+    {
         require(tokenAddresses.length == amounts.length, "unmatched length");
         for (uint i = 0; i < tokenAddresses.length; ++i) {
             zkCoreAddress.depositERC20(IERC20(tokenAddresses[i]), amounts[i], receiverLayer2);
@@ -42,7 +49,14 @@ contract ZKSTreasury is Ownable, ReentrancyGuard {
         zkCoreAddress = ZKCore(newZkCoreAddress);
     }
 
-    function approveToZKCore(address[] calldata tokenAddresses, uint[] calldata allowances) external nonReentrant onlyOwner {
+    function approveToZKCore(
+        address[] calldata tokenAddresses,
+        uint[] calldata allowances
+    )
+    external
+    nonReentrant
+    onlyOwner
+    {
         require(tokenAddresses.length == allowances.length, "unmatched length");
         for (uint i = 0; i < tokenAddresses.length; ++i) {
             IERC20(tokenAddresses[i]).approve(address(zkCoreAddress), allowances[i]);
