@@ -4,17 +4,17 @@ pragma solidity 0.8.7;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-import "./interface/ZKCore.sol";
+import "./interface/ZksCore.sol";
 
-contract ZKSTreasury is Ownable, ReentrancyGuard {
+contract ZksTreasury is Ownable, ReentrancyGuard {
     event DepositETH(address depositer, uint amount);
 
-    ZKCore public zkCoreAddress;
+    ZksCore public zksCoreAddress;
     address public receiverLayer2;
 
-    constructor(address receiverL2, address zkCoreAddr){
+    constructor(address receiverL2, address zksCoreAddr){
         receiverLayer2 = receiverL2;
-        zkCoreAddress = ZKCore(zkCoreAddr);
+        zksCoreAddress = ZksCore(zksCoreAddr);
     }
 
     receive() external payable {
@@ -23,7 +23,7 @@ contract ZKSTreasury is Ownable, ReentrancyGuard {
 
     // deposit eth locked in this contract to layer2
     function depositEthToZKCore(uint amount) external onlyOwner {
-        zkCoreAddress.depositETH{value : amount}(receiverLayer2);
+        zksCoreAddress.depositETH{value : amount}(receiverLayer2);
     }
 
     // deposit erc20 locked in this contract to layer2
@@ -37,7 +37,7 @@ contract ZKSTreasury is Ownable, ReentrancyGuard {
     {
         require(tokenAddresses.length == amounts.length, "unmatched length");
         for (uint i = 0; i < tokenAddresses.length; ++i) {
-            zkCoreAddress.depositERC20(IERC20(tokenAddresses[i]), amounts[i], receiverLayer2);
+            zksCoreAddress.depositERC20(IERC20(tokenAddresses[i]), amounts[i], receiverLayer2);
         }
     }
 
@@ -46,13 +46,13 @@ contract ZKSTreasury is Ownable, ReentrancyGuard {
         receiverLayer2 = newReceiverLayer2;
     }
 
-    // zkCoreAddress setter
-    function setZkCoreAddress(address newZkCoreAddress) external onlyOwner {
-        zkCoreAddress = ZKCore(newZkCoreAddress);
+    // zksCoreAddress setter
+    function setZksCoreAddress(address newZksCoreAddress) external onlyOwner {
+        zksCoreAddress = ZksCore(newZksCoreAddress);
     }
 
-    // give erc20 approval to ZK core contract
-    function approveToZKCore(
+    // give erc20 approval to Zks core contract
+    function approveToZksCore(
         address[] calldata tokenAddresses,
         uint[] calldata allowances
     )
@@ -62,7 +62,7 @@ contract ZKSTreasury is Ownable, ReentrancyGuard {
     {
         require(tokenAddresses.length == allowances.length, "unmatched length");
         for (uint i = 0; i < tokenAddresses.length; ++i) {
-            IERC20(tokenAddresses[i]).approve(address(zkCoreAddress), allowances[i]);
+            IERC20(tokenAddresses[i]).approve(address(zksCoreAddress), allowances[i]);
         }
     }
 
@@ -71,6 +71,7 @@ contract ZKSTreasury is Ownable, ReentrancyGuard {
         if (tokenAddress != address(0)) {
             // withdraw ERC20
             IERC20(tokenAddress).transfer(msg.sender, amount);
+            return;
         }
 
         // withdraw eth

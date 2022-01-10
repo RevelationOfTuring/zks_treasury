@@ -3,9 +3,9 @@ pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import "../interface/ZKCore.sol";
+import "../interface/ZksCore.sol";
 
-contract MockZKCore is ZKCore {
+contract MockZKCore is ZksCore {
     bool public isDepositERC20Invoked;
     bool public isDepositETHInvoked;
     address ZKSTreasuryAddress;
