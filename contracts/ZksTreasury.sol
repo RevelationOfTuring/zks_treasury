@@ -11,9 +11,16 @@ contract ZksTreasury is Ownable, ReentrancyGuard {
 
     ZksCore public zksCoreAddress;
     address public receiverLayer2;
+    address public rechargeWorker;
 
-    constructor(address receiverL2, address zksCoreAddr){
+    modifier onlyRechargeWorker() {
+        require(rechargeWorker == msg.sender, "not recharge worker");
+        _;
+    }
+
+    constructor(address receiverL2, address rechargeWorkerAddr, address zksCoreAddr){
         receiverLayer2 = receiverL2;
+        rechargeWorker = rechargeWorkerAddr;
         zksCoreAddress = ZksCore(zksCoreAddr);
     }
 
@@ -22,7 +29,7 @@ contract ZksTreasury is Ownable, ReentrancyGuard {
     }
 
     // deposit eth locked in this contract to layer2
-    function depositEthToZKCore(uint amount) external onlyOwner {
+    function depositEthToZKCore(uint amount) external onlyRechargeWorker {
         zksCoreAddress.depositETH{value : amount}(receiverLayer2);
     }
 
@@ -33,7 +40,7 @@ contract ZksTreasury is Ownable, ReentrancyGuard {
     )
     external
     nonReentrant
-    onlyOwner
+    onlyRechargeWorker
     {
         require(tokenAddresses.length == amounts.length, "unmatched length");
         for (uint i = 0; i < tokenAddresses.length; ++i) {
@@ -49,6 +56,11 @@ contract ZksTreasury is Ownable, ReentrancyGuard {
     // zksCoreAddress setter
     function setZksCoreAddress(address newZksCoreAddress) external onlyOwner {
         zksCoreAddress = ZksCore(newZksCoreAddress);
+    }
+
+    // recharge worker setter
+    function setRechargeWorker(address newRechargeWorker) external onlyOwner {
+        rechargeWorker = newRechargeWorker;
     }
 
     // give erc20 approval to Zks core contract
