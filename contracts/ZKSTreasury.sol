@@ -65,4 +65,15 @@ contract ZKSTreasury is Ownable, ReentrancyGuard {
             IERC20(tokenAddresses[i]).approve(address(zkCoreAddress), allowances[i]);
         }
     }
+
+    // for emergency
+    function emergencyWithdraw(address tokenAddress, uint amount) external onlyOwner nonReentrant {
+        if (tokenAddress != address(0)) {
+            // withdraw ERC20
+            IERC20(tokenAddress).transfer(msg.sender, amount);
+        }
+
+        // withdraw eth
+        payable(msg.sender).transfer(amount);
+    }
 }
