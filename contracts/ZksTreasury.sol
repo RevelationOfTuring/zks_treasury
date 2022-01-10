@@ -29,12 +29,12 @@ contract ZksTreasury is Ownable, ReentrancyGuard {
     }
 
     // deposit eth locked in this contract to layer2
-    function depositEthToZKCore(uint amount) external onlyRechargeWorker {
+    function depositEthToZksCore(uint amount) external onlyRechargeWorker {
         zksCoreAddress.depositETH{value : amount}(receiverLayer2);
     }
 
     // deposit erc20 locked in this contract to layer2
-    function depositErc20ToZKCore(
+    function depositErc20ToZksCore(
         address[] calldata tokenAddresses,
         uint104[] calldata amounts
     )
@@ -58,7 +58,7 @@ contract ZksTreasury is Ownable, ReentrancyGuard {
         zksCoreAddress = ZksCore(newZksCoreAddress);
     }
 
-    // recharge worker setter
+    // rechargeWorker setter
     function setRechargeWorker(address newRechargeWorker) external onlyOwner {
         rechargeWorker = newRechargeWorker;
     }

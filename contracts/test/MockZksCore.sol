@@ -5,18 +5,18 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../interface/ZksCore.sol";
 
-contract MockZKCore is ZksCore {
+contract MockZksCore is ZksCore {
     bool public isDepositERC20Invoked;
     bool public isDepositETHInvoked;
-    address ZKSTreasuryAddress;
+    address ZksTreasuryAddress;
 
-    function setZKSTreasuryAddress(address targetAddr) external {
-        ZKSTreasuryAddress = targetAddr;
+    function setZksTreasuryAddress(address targetAddr) external {
+        ZksTreasuryAddress = targetAddr;
     }
 
     function depositERC20(IERC20 _token, uint104 _amount, address _franklinAddr) external override {
         isDepositERC20Invoked = true;
-        require(IERC20(_token).allowance(ZKSTreasuryAddress, address(this)) >= _amount, "insufficient allowance");
+        require(IERC20(_token).allowance(ZksTreasuryAddress, address(this)) >= _amount, "insufficient allowance");
     }
 
     function depositETH(address _franklinAddr) external override payable {
