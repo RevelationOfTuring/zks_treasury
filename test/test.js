@@ -94,5 +94,14 @@ describe("ZksTreasury", function () {
         })
 
         expect(await ethers.provider.getBalance(zksTreasury.address)).to.equal(ethBalance + oneEther)
+
+        // deposit eth to zks core
+        await expect(zksTreasury.depositEthToZksCore(oneEther)).to.be.revertedWith('not recharge worker')
+        await expect(zksTreasury.connect(rechargeWorker).depositEthToZksCore(oneEther + 1)).to.be.reverted
+        await zksTreasury.connect(rechargeWorker).depositEthToZksCore(oneEther)
+
+        // eth balance check
+        expect(await ethers.provider.getBalance(zksTreasury.address)).to.equal(0)
+        expect(await ethers.provider.getBalance(mockZksCore.address)).to.equal(oneEther)
     })
 });
