@@ -10,6 +10,6 @@ npx hardhat compile
 npx hardhat clean
 npx hardhat test
 npx hardhat node
-node scripts/local-deploy-script.js
+node scripts/local_deployment.js
 npx hardhat help
 ```
