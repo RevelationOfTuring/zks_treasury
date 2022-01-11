@@ -4,8 +4,8 @@ const params = require('./params/local_deployment_params')
 const assert = require('assert')
 
 async function main() {
-    const deployer = (await ethers.getSigners())[0]
-    assert.equal(deployer.address, params.DEPLOYER_ADDR)
+    const deployer = (await hre.ethers.getSigners())[0]
+    assert.equal(deployer.address, hre.ethers.utils.getAddress(params.DEPLOYER_ADDR))
 
     let deploymentRecord = {}
     console.log(`contracts deployer: ${deployer.address}`)
