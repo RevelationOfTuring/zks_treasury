@@ -1,9 +1,12 @@
 const hre = require("hardhat")
 const fs = require('fs')
 const params = require('./params/local_deployment_params')
+const assert = require('assert')
 
 async function main() {
     const deployer = (await ethers.getSigners())[0]
+    assert.equal(deployer.address, params.DEPLOYER_ADDR)
+
     let deploymentRecord = {}
     console.log(`contracts deployer: ${deployer.address}`)
     console.log('account balance: ', (await deployer.getBalance()).toString())
