@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./interface/ZksCore.sol";
 
 contract ZksTreasury is Ownable, ReentrancyGuard {
-    event DepositETH(address depositer, uint amount);
+    event DepositETH(address indexed depositer, uint amount);
 
     ZksCore public zksCoreAddress;
     address public receiverLayer2;
