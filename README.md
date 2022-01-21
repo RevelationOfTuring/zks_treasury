@@ -12,3 +12,7 @@ npx hardhat node
 node scripts/local_deployment.js
 npx hardhat help
 ```
+
+## Contract Address
+
+Goerli:0x5bc50f93c9fd1cad53d8b29af776cc3ce173c122
