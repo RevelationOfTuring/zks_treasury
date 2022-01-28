@@ -12,7 +12,6 @@ npx hardhat node
 node scripts/local_deployment.js
 npx hardhat help
 ```
-0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 ## Contract Address
 
 ### Goerli
