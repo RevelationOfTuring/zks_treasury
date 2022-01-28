@@ -3,10 +3,13 @@ pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import "./interface/ZksCore.sol";
 
 contract ZksTreasury is Ownable, ReentrancyGuard {
+    using SafeERC20 for IERC20;
     event DepositETH(address indexed depositer, uint amount);
 
     ZksCore public zksCoreAddress;
@@ -74,7 +77,7 @@ contract ZksTreasury is Ownable, ReentrancyGuard {
     {
         require(tokenAddresses.length == allowances.length, "unmatched length");
         for (uint i = 0; i < tokenAddresses.length; ++i) {
-            IERC20(tokenAddresses[i]).approve(address(zksCoreAddress), allowances[i]);
+            IERC20(tokenAddresses[i]).safeApprove(address(zksCoreAddress), allowances[i]);
         }
     }
 
@@ -82,7 +85,7 @@ contract ZksTreasury is Ownable, ReentrancyGuard {
     function emergencyWithdraw(address tokenAddress, uint amount) external onlyOwner nonReentrant {
         if (tokenAddress != address(0)) {
             // withdraw ERC20
-            IERC20(tokenAddress).transfer(msg.sender, amount);
+            IERC20(tokenAddress).safeTransfer(msg.sender, amount);
             return;
         }
 
