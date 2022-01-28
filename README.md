@@ -14,6 +14,15 @@ npx hardhat help
 ```
 ## Contract Address
 
+### Mainnet
+
+USDT: 0xdAC17F958D2ee523a2206206994597C13D831ec7
+
+ZksCore: 0x5CDAF83E077DBaC2692b5864CA18b61d67453Be8
+
+ZksTreasury: 0x7f7D6c12b45C430f6e2B0Edb5D1aA34aa2d7B6B2
+
+
 ### Goerli
 USDT: 0xe7ddde77db65E327Ec8558d19414a21a33CF9a9a
 
