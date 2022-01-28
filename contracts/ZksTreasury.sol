@@ -14,16 +14,16 @@ contract ZksTreasury is Ownable, ReentrancyGuard {
 
     ZksCore public zksCoreAddress;
     address public receiverLayer2;
-    address public rechargeWorker;
+    address public depositWorker;
 
-    modifier onlyRechargeWorker() {
-        require(rechargeWorker == msg.sender, "not recharge worker");
+    modifier onlyDepositWorker() {
+        require(depositWorker == msg.sender, "not deposit worker");
         _;
     }
 
-    constructor(address receiverL2, address rechargeWorkerAddr, address zksCoreAddr){
+    constructor(address receiverL2, address depositWorkerAddr, address zksCoreAddr){
         receiverLayer2 = receiverL2;
-        rechargeWorker = rechargeWorkerAddr;
+        depositWorker = depositWorkerAddr;
         zksCoreAddress = ZksCore(zksCoreAddr);
     }
 
@@ -32,7 +32,7 @@ contract ZksTreasury is Ownable, ReentrancyGuard {
     }
 
     // deposit eth locked in this contract to layer2
-    function depositEthToZksCore(uint amount) external onlyRechargeWorker {
+    function depositEthToZksCore(uint amount) external onlyDepositWorker {
         zksCoreAddress.depositETH{value : amount}(receiverLayer2);
     }
 
@@ -43,7 +43,7 @@ contract ZksTreasury is Ownable, ReentrancyGuard {
     )
     external
     nonReentrant
-    onlyRechargeWorker
+    onlyDepositWorker
     {
         require(tokenAddresses.length == amounts.length, "unmatched length");
         for (uint i = 0; i < tokenAddresses.length; ++i) {
@@ -61,9 +61,9 @@ contract ZksTreasury is Ownable, ReentrancyGuard {
         zksCoreAddress = ZksCore(newZksCoreAddress);
     }
 
-    // rechargeWorker setter
-    function setRechargeWorker(address newRechargeWorker) external onlyOwner {
-        rechargeWorker = newRechargeWorker;
+    // depositWorker setter
+    function setDepositWorker(address newDepositWorker) external onlyOwner {
+        depositWorker = newDepositWorker;
     }
 
     // give erc20 approval to Zks core contract
